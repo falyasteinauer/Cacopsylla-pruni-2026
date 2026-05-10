@@ -120,14 +120,31 @@ var container = document.getElementById("view"),
 
 app.init(container);       // initialize viewer
 
-// load the scene
-app.loadSceneFile("./data/3D/scene.js", function (scene) {
-  // scene file has been loaded
-  app.start();
-}, function (scene) {
-  // all associated files have been loaded
+// load the scene parts (divided for Netlify)
+var sceneLoaded = false;
+var partCount = 0;
 
-});
+function loadScenePart(partNumber) {
+  var script = document.createElement('script');
+  script.src = "./data/3D/scene_partie_" + partNumber + ".js";
+  script.onload = function() {
+    partCount++;
+    if (partCount === 9 && !sceneLoaded) {
+      sceneLoaded = true;
+      // All parts loaded, start the app
+      if (window.scene) {
+        app.loadScene(window.scene);
+        app.start();
+      }
+    }
+  };
+  document.head.appendChild(script);
+}
+
+// Load all 9 parts
+for (var i = 1; i <= 9; i++) {
+  loadScenePart(i);
+}
 </script>
 <!-- Code à ajouter dans votre index.html exporté par qgis2threejs -->
 <!-- Insérez ce code AVANT la balise </body> -->
