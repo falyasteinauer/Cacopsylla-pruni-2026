@@ -120,31 +120,26 @@ var container = document.getElementById("view"),
 
 app.init(container);       // initialize viewer
 
-// load the scene parts (divided for Netlify)
-var sceneLoaded = false;
-var partCount = 0;
+<!-- Chargement des 9 parties en séquence -->
+<script src="./data/3D/scene_partie_1.js"></script>
+<script src="./data/3D/scene_partie_2.js"></script>
+<script src="./data/3D/scene_partie_3.js"></script>
+<script src="./data/3D/scene_partie_4.js"></script>
+<script src="./data/3D/scene_partie_5.js"></script>
+<script src="./data/3D/scene_partie_6.js"></script>
+<script src="./data/3D/scene_partie_7.js"></script>
+<script src="./data/3D/scene_partie_8.js"></script>
+<script src="./data/3D/scene_partie_9.js"></script>
 
-function loadScenePart(partNumber) {
-  var script = document.createElement('script');
-  script.src = "./data/3D/scene_partie_" + partNumber + ".js";
-  script.onload = function() {
-    partCount++;
-    if (partCount === 9 && !sceneLoaded) {
-      sceneLoaded = true;
-      // All parts loaded, start the app
-      if (window.scene) {
-        app.loadScene(window.scene);
-        app.start();
-      }
-    }
-  };
-  document.head.appendChild(script);
-}
+<script>
+// Initialiser normalement
+var container = document.getElementById("view"),
+    app = Q3D.application,
+    gui = Q3D.gui;
 
-// Load all 9 parts
-for (var i = 1; i <= 9; i++) {
-  loadScenePart(i);
-}
+app.init(container);
+app.start();
+  
 </script>
 <!-- Code à ajouter dans votre index.html exporté par qgis2threejs -->
 <!-- Insérez ce code AVANT la balise </body> -->
