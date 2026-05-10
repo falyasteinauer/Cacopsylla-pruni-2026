@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Points</title>
+<title>Carte 3D Psylles - Falya STEINAUER</title>
 <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 <base target="_blank">
 <link rel="stylesheet" type="text/css" href="./Qgis2threejs.css">
@@ -21,47 +21,47 @@
   <div id="northarrow"></div>
   <div id="navigation"></div>
 </div>
-
+ 
 <!-- popup -->
 <div id="popup">
   <div id="closebtn">&times;</div>
   <div id="popupbar"></div>
   <div id="popupbody">
     <div id="popupcontent"></div>
-
+ 
     <!-- query result -->
     <div id="queryresult">
       <table id="qr_coords_table">
         <caption>Clicked coordinates <div id="zoomtopoint" class="action-zoom zoombtn"></div></caption>
         <tr><td id="qr_coords"></td></tr>
       </table>
-
+ 
       <table id="qr_layername_table">
         <caption>Layer <div id="zoomtolayer" class="action-zoom zoombtn"></div></caption>
         <tr><td id="qr_layername"></td></tr>
       </table>
-
+ 
       <table id="qr_attrs_table">
         <caption>Attributes</caption>
       </table>
-
+ 
       <!-- camera actions and measure tool -->
       <div id="orbitbtn" class="action-btn action-orbit">Orbit</div>
       <div id="measurebtn" class="action-btn">Measure distance</div>
     </div>
-
+ 
     <!-- page info -->
     <div id="pageinfo">
       <h1>Current View URL</h1>
       <div><input id="urlbox" type="text"></div>
-
+ 
       <h1>Usage</h1>
       <table id="usage">
         <tr><td colspan="2" class="star">Mouse</td></tr>
         <tr><td>Left button + Move</td><td>Orbit</td></tr>
         <tr><td>Mouse Wheel</td><td>Zoom</td></tr>
         <tr><td>Right button + Move</td><td>Pan</td></tr>
-
+ 
         <tr><td colspan="2" class="star">Keys</td></tr>
         <tr><td>Arrow keys</td><td>Move Horizontally</td></tr>
         <tr><td>Shift + Arrow keys</td><td>Orbit</td></tr>
@@ -73,77 +73,45 @@
         <tr><td>Shift + R</td><td>Reset Camera Position</td></tr>
         <tr><td>Shift + S</td><td>Save Image</td></tr>
       </table>
-
+ 
       <h1>About</h1>
       <div id="about"><img src="./Qgis2threejs.png">
-        This page was made with <a href="https://www.qgis.org/">QGIS</a> and <a href="https://github.com/minorua/Qgis2threejs">Qgis2threejs</a> plugin (version 2.10).
+        Cette carte a été réalisée avec <a href="https://www.qgis.org/">QGIS</a> et <a href="https://github.com/minorua/Qgis2threejs">Qgis2threejs</a> plugin (version 2.10).
         <div>Powered by <a href="https://threejs.org/">three.js</a>
         <span id="lib_proj4js"> and <a href="https://trac.osgeo.org/proj4js/">Proj4js</a></span>.</div>
+        <div><strong>Cartographie : Falya STEINAUER</strong></div>
       </div>
     </div>
   </div>
 </div>
-
+ 
 <!-- progress bar -->
 <div id="progress"><div id="progressbar"></div></div>
-
+ 
 <!-- menu -->
 <div id="toolbtns">
   <div id="layerbtn"></div>
   <div id="animbtn" class="hidden"></div>
   <div id="infobtn"></div>
 </div>
-
+ 
 <!-- header and footer -->
 <div id="header"></div>
 <div id="footer"></div>
-
+ 
 <!-- layer panel -->
 <div id="layerpanel">
   <div id="layerlist"></div>
 </div>
-
+ 
 <!-- animation -->
 <div id="narrativebox" class="ef1">
   <div id="narbody">
-
   </div>
   <div id="nextbtn"></div>
 </div>
-
-<script>
-Q3D.Config.localMode = true;
-
-var container = document.getElementById("view"),
-    app = Q3D.application,
-    gui = Q3D.gui;
-
-app.init(container);       // initialize viewer
-
-<!-- Chargement des 9 parties en séquence -->
-<script src="./data/3D/scene_partie_1.js"></script>
-<script src="./data/3D/scene_partie_2.js"></script>
-<script src="./data/3D/scene_partie_3.js"></script>
-<script src="./data/3D/scene_partie_4.js"></script>
-<script src="./data/3D/scene_partie_5.js"></script>
-<script src="./data/3D/scene_partie_6.js"></script>
-<script src="./data/3D/scene_partie_7.js"></script>
-<script src="./data/3D/scene_partie_8.js"></script>
-<script src="./data/3D/scene_partie_9.js"></script>
-
-<script>
-// Initialiser normalement
-var container = document.getElementById("view"),
-    app = Q3D.application,
-    gui = Q3D.gui;
-
-app.init(container);
-app.start();
-  
-</script>
-<!-- Code à ajouter dans votre index.html exporté par qgis2threejs -->
-<!-- Insérez ce code AVANT la balise </body> -->
-
+ 
+<!-- LÉGENDE DE LA CARTE -->
 <div id="legend" style="
     position: absolute;
     top: 20px;
@@ -176,7 +144,7 @@ app.start();
             Zone C
         </div>
     </div>
-
+ 
     <!-- Barres de captures -->
     <div style="margin-bottom: 10px;">
         <strong>Barres de captures :</strong><br>
@@ -185,7 +153,7 @@ app.start();
             Prunellier
         </div>
     </div>
-
+ 
     <!-- Zones boisées -->
     <div style="margin-bottom: 10px;">
         <strong>Zones boisées :</strong><br>
@@ -198,13 +166,13 @@ app.start();
             Abricotiers
         </div>
     </div>
-
+ 
     <!-- Informations sur les captures -->
     <div style="margin-top: 15px; padding-top: 10px; border-top: 1px solid #ccc; font-size: 11px;">
         <strong>Captures :</strong><br>
         <span id="capture-count">123</span> Nombre de <em>C. pruni</em> capturés
     </div>
-
+ 
     <!-- Sources -->
     <div style="margin-top: 10px; padding-top: 8px; border-top: 1px solid #ccc; font-size: 10px; color: #666;">
         <strong>Sources :</strong><br>
@@ -213,7 +181,7 @@ app.start();
         Données forestières : BD FORET v1.0 - © IGN<br>
         Cartographie réalisée par <strong>Falya STEINAUER</strong>
     </div>
-
+ 
     <!-- Bouton pour masquer/afficher -->
     <button onclick="toggleLegend()" style="
         position: absolute;
@@ -225,8 +193,52 @@ app.start();
         cursor: pointer;
     ">×</button>
 </div>
-
+ 
 <script>
+// Configuration
+Q3D.Config.localMode = true;
+ 
+var container = document.getElementById("view"),
+    app = Q3D.application,
+    gui = Q3D.gui;
+ 
+app.init(container);
+ 
+// Chargement dynamique des 9 parties de scene.js
+function loadSceneParts() {
+    var partesChargees = 0;
+    var totalParties = 9;
+    
+    function chargerPartie(numero) {
+        var script = document.createElement('script');
+        script.src = './data/3D/scene_partie_' + numero + '.js';
+        script.onload = function() {
+            partesChargees++;
+            console.log('Partie ' + numero + ' chargée (' + partesChargees + '/' + totalParties + ')');
+            
+            if (partesChargees === totalParties) {
+                console.log('Toutes les parties chargées, démarrage de l\'application...');
+                setTimeout(function() {
+                    app.start();
+                }, 500);
+            }
+        };
+        script.onerror = function() {
+            console.error('Erreur chargement partie ' + numero);
+        };
+        document.head.appendChild(script);
+    }
+    
+    // Charger toutes les parties
+    for (var i = 1; i <= totalParties; i++) {
+        chargerPartie(i);
+    }
+}
+ 
+// Démarrer le chargement
+loadSceneParts();
+ 
+// Fonctions pour la légende
 function toggleLegend() {
     var legend = document.getElementById('legend');
     if (legend.style.display === 'none') {
@@ -235,7 +247,7 @@ function toggleLegend() {
         legend.style.display = 'none';
     }
 }
-
+ 
 // Ajouter un bouton pour réafficher la légende si elle est cachée
 function addLegendButton() {
     var button = document.createElement('button');
@@ -258,7 +270,7 @@ function addLegendButton() {
     };
     document.body.appendChild(button);
 }
-
+ 
 // Initialiser au chargement
 window.addEventListener('load', function() {
     addLegendButton();
