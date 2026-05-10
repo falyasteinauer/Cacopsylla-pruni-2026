@@ -211,7 +211,7 @@ function loadSceneParts() {
     
     function chargerPartie(numero) {
         var script = document.createElement('script');
-        script.src = './data/3D/scene_partie_' + numero + '.js';
+        script.src = 'scene_partie_' + numero + '.js';
         script.onload = function() {
             partesChargees++;
             console.log('Partie ' + numero + ' chargée (' + partesChargees + '/' + totalParties + ')');
