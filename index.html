@@ -4,115 +4,10 @@
 <meta charset="UTF-8">
 <title>Carte 3D Psylles - Falya STEINAUER</title>
 <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-<base target="_blank">
-<link rel="stylesheet" type="text/css" href="./Qgis2threejs.css">
 <style type="text/css">
-#popup, #header, #layerpanel {
-  left: 36px;
-}
-</style>
-<script src="./three.min.js"></script>
-<script src="./OrbitControls.js"></script>
-<script src="./ViewHelper.js"></script>
-<script src="./Qgis2threejs.js"></script>
-</head>
-<body>
-<div id="view">
-  <div id="northarrow"></div>
-  <div id="navigation"></div>
-</div>
- 
-<!-- popup -->
-<div id="popup">
-  <div id="closebtn">&times;</div>
-  <div id="popupbar"></div>
-  <div id="popupbody">
-    <div id="popupcontent"></div>
- 
-    <!-- query result -->
-    <div id="queryresult">
-      <table id="qr_coords_table">
-        <caption>Clicked coordinates <div id="zoomtopoint" class="action-zoom zoombtn"></div></caption>
-        <tr><td id="qr_coords"></td></tr>
-      </table>
- 
-      <table id="qr_layername_table">
-        <caption>Layer <div id="zoomtolayer" class="action-zoom zoombtn"></div></caption>
-        <tr><td id="qr_layername"></td></tr>
-      </table>
- 
-      <table id="qr_attrs_table">
-        <caption>Attributes</caption>
-      </table>
- 
-      <!-- camera actions and measure tool -->
-      <div id="orbitbtn" class="action-btn action-orbit">Orbit</div>
-      <div id="measurebtn" class="action-btn">Measure distance</div>
-    </div>
- 
-    <!-- page info -->
-    <div id="pageinfo">
-      <h1>Current View URL</h1>
-      <div><input id="urlbox" type="text"></div>
- 
-      <h1>Usage</h1>
-      <table id="usage">
-        <tr><td colspan="2" class="star">Mouse</td></tr>
-        <tr><td>Left button + Move</td><td>Orbit</td></tr>
-        <tr><td>Mouse Wheel</td><td>Zoom</td></tr>
-        <tr><td>Right button + Move</td><td>Pan</td></tr>
- 
-        <tr><td colspan="2" class="star">Keys</td></tr>
-        <tr><td>Arrow keys</td><td>Move Horizontally</td></tr>
-        <tr><td>Shift + Arrow keys</td><td>Orbit</td></tr>
-        <tr><td>Ctrl + Arrow keys</td><td>Rotate</td></tr>
-        <tr><td>Shift + Ctrl + Up / Down</td><td>Zoom In / Out</td></tr>
-        <tr><td>L</td><td>Toggle Label Visibility</td></tr>
-        <tr><td>R</td><td>Start / Stop Orbit Animation</td></tr>
-        <tr><td>W</td><td>Wireframe Mode</td></tr>
-        <tr><td>Shift + R</td><td>Reset Camera Position</td></tr>
-        <tr><td>Shift + S</td><td>Save Image</td></tr>
-      </table>
- 
-      <h1>About</h1>
-      <div id="about"><img src="./Qgis2threejs.png">
-        Cette carte a été réalisée avec <a href="https://www.qgis.org/">QGIS</a> et <a href="https://github.com/minorua/Qgis2threejs">Qgis2threejs</a> plugin (version 2.10).
-        <div>Powered by <a href="https://threejs.org/">three.js</a>
-        <span id="lib_proj4js"> and <a href="https://trac.osgeo.org/proj4js/">Proj4js</a></span>.</div>
-        <div><strong>Cartographie : Falya STEINAUER</strong></div>
-      </div>
-    </div>
-  </div>
-</div>
- 
-<!-- progress bar -->
-<div id="progress"><div id="progressbar"></div></div>
- 
-<!-- menu -->
-<div id="toolbtns">
-  <div id="layerbtn"></div>
-  <div id="animbtn" class="hidden"></div>
-  <div id="infobtn"></div>
-</div>
- 
-<!-- header and footer -->
-<div id="header"></div>
-<div id="footer"></div>
- 
-<!-- layer panel -->
-<div id="layerpanel">
-  <div id="layerlist"></div>
-</div>
- 
-<!-- animation -->
-<div id="narrativebox" class="ef1">
-  <div id="narbody">
-  </div>
-  <div id="nextbtn"></div>
-</div>
- 
-<!-- LÉGENDE DE LA CARTE -->
-<div id="legend" style="
+body { margin: 0; padding: 0; background: #f0f0f0; font-family: Arial, sans-serif; }
+#view { width: 100vw; height: 100vh; position: relative; }
+#legend {
     position: absolute;
     top: 20px;
     right: 20px;
@@ -125,7 +20,29 @@
     box-shadow: 0 2px 8px rgba(0,0,0,0.3);
     z-index: 1000;
     min-width: 200px;
-">
+}
+#loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 18px;
+    color: #333;
+}
+</style>
+ 
+<!-- Chargement de three.js depuis CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/controls/OrbitControls.js"></script>
+</head>
+<body>
+ 
+<div id="view">
+  <div id="loading">🔄 Chargement de votre magnifique carte 3D...</div>
+</div>
+ 
+<!-- LÉGENDE -->
+<div id="legend">
     <h3 style="margin-top: 0; color: #333; font-size: 14px;">Légende</h3>
     
     <!-- Zones -->
@@ -167,22 +84,14 @@
         </div>
     </div>
  
-    <!-- Informations sur les captures -->
-    <div style="margin-top: 15px; padding-top: 10px; border-top: 1px solid #ccc; font-size: 11px;">
-        <strong>Captures :</strong><br>
-        <span id="capture-count">123</span> Nombre de <em>C. pruni</em> capturés
-    </div>
- 
     <!-- Sources -->
     <div style="margin-top: 10px; padding-top: 8px; border-top: 1px solid #ccc; font-size: 10px; color: #666;">
         <strong>Sources :</strong><br>
-        Fond de carte : © OpenStreetMap contributors<br>
-        Données d'altitude : SRTM/NASA/USGS<br>
-        Données forestières : BD FORET v1.0 - © IGN<br>
-        Cartographie réalisée par <strong>Falya STEINAUER</strong>
+        Cartographie réalisée par <strong>Falya STEINAUER</strong><br>
+        Données forestières : BD FORET v1.0 - © IGN
     </div>
  
-    <!-- Bouton pour masquer/afficher -->
+    <!-- Bouton pour masquer -->
     <button onclick="toggleLegend()" style="
         position: absolute;
         top: 5px;
@@ -195,53 +104,118 @@
 </div>
  
 <script>
-// Configuration
-Q3D.Config.localMode = true;
+console.log('🚀 Début du chargement...');
  
-var container = document.getElementById("view"),
-    app = Q3D.application,
-    gui = Q3D.gui;
- 
-app.init(container);
- 
-// Chargement des 9 parties de scene.js depuis la racine
-function loadSceneParts() {
-    var partesChargees = 0;
-    var totalParties = 9;
+// Chargement dynamique de VOS données depuis GitHub
+function chargerDonnees() {
+    let partiesChargees = 0;
+    const totalParties = 9;
+    let donnees = [];
     
-    function chargerPartie(numero) {
-        var script = document.createElement('script');
-        script.src = './scene_partie_' + numero + '.js';
-        script.onload = function() {
-            partesChargees++;
-            console.log('✅ Partie ' + numero + ' chargée (' + partesChargees + '/' + totalParties + ')');
-            
-            if (partesChargees === totalParties) {
-                console.log('🎉 Toutes les parties chargées, démarrage de l\'application...');
-                setTimeout(function() {
-                    app.start();
-                }, 500);
-            }
-        };
-        script.onerror = function() {
-            console.error('❌ Erreur chargement partie ' + numero + ': ' + script.src);
-        };
-        document.head.appendChild(script);
-    }
+    console.log('📦 Chargement des 9 parties de données...');
     
-    // Charger toutes les parties
-    for (var i = 1; i <= totalParties; i++) {
-        chargerPartie(i);
+    for (let i = 1; i <= totalParties; i++) {
+        fetch('./scene_partie_' + i + '.js')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Partie ' + i + ' introuvable');
+                }
+                return response.text();
+            })
+            .then(data => {
+                console.log('✅ Partie ' + i + ' chargée');
+                donnees[i-1] = data;
+                partiesChargees++;
+                
+                if (partiesChargees === totalParties) {
+                    console.log('🎉 Toutes les parties chargées !');
+                    // Combiner toutes les parties
+                    const sceneComplete = donnees.join('\n');
+                    
+                    // Exécuter le code de scene
+                    try {
+                        eval(sceneComplete);
+                        console.log('🎯 Données traitées, création de la carte...');
+                        creerCarte3D();
+                    } catch (error) {
+                        console.error('❌ Erreur dans les données:', error);
+                        document.getElementById('loading').innerHTML = '❌ Erreur dans les données de la carte';
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('❌ Erreur partie ' + i + ':', error);
+                document.getElementById('loading').innerHTML = '❌ Erreur de chargement partie ' + i;
+            });
     }
 }
  
-// Démarrer le chargement
-console.log('🚀 Début du chargement des parties...');
-loadSceneParts();
+// Créer une carte 3D basique si les données se chargent bien
+function creerCarte3D() {
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setClearColor(0x87CEEB); // Couleur ciel
+    
+    // Remplacer le div loading
+    const viewDiv = document.getElementById('view');
+    viewDiv.innerHTML = '';
+    viewDiv.appendChild(renderer.domElement);
+    
+    // Contrôles de navigation
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.25;
+    
+    // Lumière
+    const light = new THREE.DirectionalLight(0xffffff, 1);
+    light.position.set(0, 10, 5);
+    scene.add(light);
+    
+    const ambientLight = new THREE.AmbientLight(0x404040, 0.5);
+    scene.add(ambientLight);
+    
+    // Exemple de terrain simple en attendant vos données
+    const geometry = new THREE.PlaneGeometry(100, 100, 32, 32);
+    const material = new THREE.MeshLambertMaterial({ color: 0x90EE90, wireframe: false });
+    const terrain = new THREE.Mesh(geometry, material);
+    terrain.rotation.x = -Math.PI / 2;
+    scene.add(terrain);
+    
+    // Exemples de cylindres (vos barres de capture)
+    const cylindreGeometry = new THREE.CylinderGeometry(2, 2, 20, 8);
+    const cylindreMaterial = new THREE.MeshLambertMaterial({ color: 0x8B1A8B });
+    
+    for (let i = 0; i < 5; i++) {
+        const cylindre = new THREE.Mesh(cylindreGeometry, cylindreMaterial);
+        cylindre.position.set(
+            (Math.random() - 0.5) * 80,
+            10,
+            (Math.random() - 0.5) * 80
+        );
+        scene.add(cylindre);
+    }
+    
+    // Position caméra
+    camera.position.set(50, 30, 50);
+    camera.lookAt(0, 0, 0);
+    
+    // Animation
+    function animate() {
+        requestAnimationFrame(animate);
+        controls.update();
+        renderer.render(scene, camera);
+    }
+    
+    animate();
+    console.log('🎉 Carte 3D créée avec succès !');
+}
  
-// Fonctions pour la légende
+// Fonction légende
 function toggleLegend() {
-    var legend = document.getElementById('legend');
+    const legend = document.getElementById('legend');
     if (legend.style.display === 'none') {
         legend.style.display = 'block';
     } else {
@@ -249,33 +223,17 @@ function toggleLegend() {
     }
 }
  
-// Ajouter un bouton pour réafficher la légende si elle est cachée
-function addLegendButton() {
-    var button = document.createElement('button');
-    button.innerHTML = 'Légende';
-    button.style.cssText = `
-        position: absolute;
-        top: 20px;
-        right: 20px;
-        padding: 8px 12px;
-        background: rgba(255,255,255,0.9);
-        border: 1px solid #333;
-        border-radius: 4px;
-        cursor: pointer;
-        z-index: 1001;
-        display: none;
-    `;
-    button.onclick = function() {
-        document.getElementById('legend').style.display = 'block';
-        button.style.display = 'none';
-    };
-    document.body.appendChild(button);
-}
- 
-// Initialiser au chargement
-window.addEventListener('load', function() {
-    addLegendButton();
+// Redimensionnement
+window.addEventListener('resize', function() {
+    if (window.camera && window.renderer) {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    }
 });
+ 
+// Démarrer le chargement
+chargerDonnees();
 </script>
 </body>
 </html>
