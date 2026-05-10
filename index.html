@@ -11,9 +11,9 @@
   left: 36px;
 }
 </style>
-<script src="./threejs/three.min.js"></script>
-<script src="./threejs/OrbitControls.js"></script>
-<script src="./threejs/ViewHelper.js"></script>
+<script src="./three.min.js"></script>
+<script src="./OrbitControls.js"></script>
+<script src="./ViewHelper.js"></script>
 <script src="./Qgis2threejs.js"></script>
 </head>
 <body>
@@ -201,3 +201,81 @@ Q3D.Config.localMode = true;
 var container = document.getElementById("view"),
     app = Q3D.application,
     gui = Q3D.gui;
+ 
+app.init(container);
+ 
+// Chargement des 9 parties de scene.js depuis la racine
+function loadSceneParts() {
+    var partesChargees = 0;
+    var totalParties = 9;
+    
+    function chargerPartie(numero) {
+        var script = document.createElement('script');
+        script.src = './scene_partie_' + numero + '.js';
+        script.onload = function() {
+            partesChargees++;
+            console.log('✅ Partie ' + numero + ' chargée (' + partesChargees + '/' + totalParties + ')');
+            
+            if (partesChargees === totalParties) {
+                console.log('🎉 Toutes les parties chargées, démarrage de l\'application...');
+                setTimeout(function() {
+                    app.start();
+                }, 500);
+            }
+        };
+        script.onerror = function() {
+            console.error('❌ Erreur chargement partie ' + numero + ': ' + script.src);
+        };
+        document.head.appendChild(script);
+    }
+    
+    // Charger toutes les parties
+    for (var i = 1; i <= totalParties; i++) {
+        chargerPartie(i);
+    }
+}
+ 
+// Démarrer le chargement
+console.log('🚀 Début du chargement des parties...');
+loadSceneParts();
+ 
+// Fonctions pour la légende
+function toggleLegend() {
+    var legend = document.getElementById('legend');
+    if (legend.style.display === 'none') {
+        legend.style.display = 'block';
+    } else {
+        legend.style.display = 'none';
+    }
+}
+ 
+// Ajouter un bouton pour réafficher la légende si elle est cachée
+function addLegendButton() {
+    var button = document.createElement('button');
+    button.innerHTML = 'Légende';
+    button.style.cssText = `
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        padding: 8px 12px;
+        background: rgba(255,255,255,0.9);
+        border: 1px solid #333;
+        border-radius: 4px;
+        cursor: pointer;
+        z-index: 1001;
+        display: none;
+    `;
+    button.onclick = function() {
+        document.getElementById('legend').style.display = 'block';
+        button.style.display = 'none';
+    };
+    document.body.appendChild(button);
+}
+ 
+// Initialiser au chargement
+window.addEventListener('load', function() {
+    addLegendButton();
+});
+</script>
+</body>
+</html>
